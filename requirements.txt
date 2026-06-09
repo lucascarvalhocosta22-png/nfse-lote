@@ -1,0 +1,8 @@
+flask>=3.0
+flask-cors
+requests
+requests-pkcs12
+cryptography
+openpyxl
+PyJWT
+gunicorn
