@@ -185,6 +185,16 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
             if r is None: L("erro",f"Falha ({cnpj})."); break
             if r.status_code in(204,404): L("ok",f"Fim ({cnpj})."); break
             if r.status_code in(401,403): L("erro",f"Acesso negado {r.status_code}."); break
+            if r.status_code==400:
+                # E2243 = CNPJ não autorizado para este certificado — pula para o próximo
+                try:
+                    erros=r.json().get("Erros",[])
+                    codigos=[e.get("Codigo","") for e in erros]
+                    if "E2243" in codigos:
+                        L("warn",f"  CNPJ {cnpj} não autorizado neste certificado (E2243) — ignorado.")
+                        break
+                except: pass
+                L("erro",f"HTTP 400: {r.text[:150]}"); break
             if r.status_code!=200: L("erro",f"HTTP {r.status_code}: {r.text[:120]}"); break
             try: payload=r.json()
             except: L("erro","Resposta inválida."); break
