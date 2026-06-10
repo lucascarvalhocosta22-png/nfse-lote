@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFS-e Lote — Portal Fiscal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Core */
+  --ink:       #0d1117;
+  --ink-2:     #1c2333;
+  --ink-3:     #2d3748;
+  --paper:     #ffffff;
+  --paper-2:   #f7f8fa;
+  --paper-3:   #eef0f4;
+  --line:      #e2e5ed;
+  --muted:     #8892a4;
+
+  /* Brand */
+  --blue:      #2563eb;
+  --blue-d:    #1d4ed8;
+  --blue-l:    #dbeafe;
+  --green:     #059669;
+  --green-l:   #d1fae5;
+  --purple:    #7c3aed;
+  --purple-l:  #ede9fe;
+  --red:       #dc2626;
+  --red-l:     #fee2e2;
+  --amber:     #d97706;
+  --amber-l:   #fef3c7;
+  --gray-l:    #f3f4f6;
+
+  --radius:    12px;
+  --radius-sm: 8px;
+  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+
+body{
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper-2);
+  min-height: 100vh;
+}
+
+/* ════════════════════════════════════════════════
+   LOGIN SCREEN
+════════════════════════════════════════════════ */
+#login-screen{
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Geometric bg */
+#login-screen::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(37,99,235,.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(124,58,237,.12) 0%, transparent 40%),
+    radial-gradient(circle at 60% 80%, rgba(5,150,105,.1) 0%, transparent 40%);
+  pointer-events:none;
+}
+
+/* Grid lines */
+#login-screen::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events:none;
+}
+
+.login-card{
+  background: rgba(255,255,255,.97);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.3);
+  position: relative;
+  z-index: 1;
+  animation: loginIn .4s cubic-bezier(.22,.68,0,1.2);
+}
+
+@keyframes loginIn{
+  from{ opacity:0; transform:translateY(24px) scale(.97); }
+  to{   opacity:1; transform:translateY(0)    scale(1);   }
+}
+
+.login-logo{
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:2rem;
+}
+
+.login-logo-icon{
+  width:48px; height:48px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-d));
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  box-shadow: 0 4px 12px rgba(37,99,235,.4);
+}
+
+.login-logo-text h1{
+  font-size:20px; font-weight:700; color:var(--ink); line-height:1.1;
+}
+.login-logo-text p{
+  font-size:12px; color:var(--muted); margin-top:1px;
+}
+
+.login-title{
+  font-size:24px; font-weight:700; color:var(--ink);
+  margin-bottom:.4rem;
+}
+.login-subtitle{
+  font-size:14px; color:var(--muted); margin-bottom:2rem;
+}
+
+.form-field{ margin-bottom:1.2rem; }
+.form-field label{
+  display:block; font-size:13px; font-weight:600;
+  color:var(--ink-3); margin-bottom:6px;
+}
+.form-field input{
+  width:100%;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--paper);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-field input:focus{
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+.form-field input::placeholder{ color: var(--muted); font-size:14px; }
+
+.login-btn{
+  width:100%; padding:13px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-d));
+  color: white; border: none; border-radius: var(--radius-sm);
+  font-family: var(--sans); font-size:15px; font-weight:600;
+  cursor:pointer; transition:opacity .15s, transform .1s;
+  box-shadow: 0 4px 12px rgba(37,99,235,.3);
+  margin-top:.5rem;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.login-btn:hover{ opacity:.9; }
+.login-btn:active{ transform:scale(.98); }
+.login-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+.login-error{
+  background: var(--red-l); color: var(--red);
+  border: 1px solid rgba(220,38,38,.2);
+  border-radius: var(--radius-sm); padding:10px 14px;
+  font-size:13px; font-weight:500;
+  margin-bottom:1rem; display:none;
+}
+
+.login-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:600; color:var(--green);
+  background:var(--green-l); padding:4px 10px; border-radius:100px;
+  margin-bottom:1.5rem;
+  border: 1px solid rgba(5,150,105,.2);
+}
+
+/* ════════════════════════════════════════════════
+   MAIN APP
+════════════════════════════════════════════════ */
+#app{ display:none; min-height:100vh; background:var(--paper-2); }
+
+/* HEADER */
+.app-header{
+  background:var(--paper);
+  border-bottom:1px solid var(--line);
+  padding:0 2rem;
+  height:60px;
+  display:flex; align-items:center; gap:12px;
+  position:sticky; top:0; z-index:100;
+  box-shadow: 0 1px 0 var(--line);
+}
+.app-logo{
+  display:flex; align-items:center; gap:9px;
+  text-decoration:none;
+}
+.app-logo-icon{
+  width:30px; height:30px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+}
+.app-logo-text{
+  font-size:16px; font-weight:700; color:var(--ink);
+}
+.app-logo-text em{ color:var(--blue); font-style:normal; }
+.hsp{ flex:1; }
+.app-user{
+  display:flex; align-items:center; gap:8px;
+  font-size:13px; color:var(--muted);
+}
+.app-user strong{ color:var(--ink); }
+.app-logout{
+  padding:6px 12px; background:transparent; color:var(--muted);
+  border:1px solid var(--line); border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:12px; cursor:pointer; transition:all .15s;
+}
+.app-logout:hover{ border-color:var(--red); color:var(--red); }
+
+/* CONTAINER */
+.app-container{
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* CARDS */
+.card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.card-header{
+  padding:1rem 1.5rem;
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:9px;
+}
+.card-header-icon{
+  width:28px; height:28px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.card-header-icon.blue{ background:var(--blue-l); }
+.card-header-icon.green{ background:var(--green-l); }
+.card-header-icon.purple{ background:var(--purple-l); }
+.card-title{
+  font-size:13px; font-weight:600;
+  letter-spacing:.03em; text-transform:uppercase;
+  color:var(--muted);
+}
+.card-body{ padding:1.5rem; }
+
+/* FORM */
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+.form-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+.fg{ display:flex; flex-direction:column; gap:5px; }
+.fg label{ font-size:12px; font-weight:600; color:var(--ink-3); }
+.fg input,.fg select{
+  border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  padding:9px 12px; font-family:var(--sans); font-size:14px;
+  color:var(--ink); background:var(--paper); outline:none;
+  transition:border-color .15s, box-shadow .15s; appearance:none;
+}
+.fg input:focus,.fg select:focus{
+  border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.08);
+}
+.fg input::placeholder{ color:var(--muted); }
+.fg .hint{ font-size:11px; color:var(--muted); line-height:1.4; }
+
+/* File drop */
+.drop-zone{
+  border:1.5px dashed var(--line); border-radius:var(--radius-sm);
+  padding:1rem; text-align:center; cursor:pointer;
+  transition:all .15s; background:var(--paper-2);
+}
+.drop-zone:hover,.drop-zone.over{ border-color:var(--blue); background:rgba(37,99,235,.03); }
+.drop-zone input{ display:none; }
+.drop-zone-icon{ font-size:20px; margin-bottom:3px; color:var(--muted); }
+.drop-zone-text{ font-size:12px; color:var(--muted); }
+.drop-zone-name{ font-size:12px; color:var(--blue); margin-top:4px; font-weight:500; word-break:break-all; }
+.cnpj-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--blue-l); color:var(--blue-d);
+  border:1px solid rgba(37,99,235,.2);
+  border-radius:6px; padding:4px 10px;
+  font-size:12px; font-weight:600; font-family:var(--mono); margin-top:5px;
+}
+
+/* Buttons */
+.btn-primary{
+  width:100%; padding:12px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));
+  color:white; border:none; border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:15px; font-weight:600;
+  cursor:pointer; transition:opacity .15s, transform .1s;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  box-shadow:0 4px 12px rgba(37,99,235,.25);
+}
+.btn-primary:hover{ opacity:.9; }
+.btn-primary:active{ transform:scale(.98); }
+.btn-primary:disabled{ opacity:.4; cursor:not-allowed; }
+
+.btn-outline{
+  padding:9px 16px; background:var(--paper); color:var(--ink-3);
+  border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:13px; font-weight:500;
+  cursor:pointer; transition:all .15s;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.btn-outline:hover{ border-color:var(--blue); color:var(--blue); }
+.btn-outline:disabled{ opacity:.35; cursor:not-allowed; }
+
+.btn-success{
+  padding:11px 20px; background:var(--green); color:white;
+  border:none; border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  cursor:pointer; transition:background .15s;
+  display:inline-flex; align-items:center; gap:7px;
+  box-shadow:0 4px 12px rgba(5,150,105,.2);
+}
+.btn-success:hover{ background:#047857; }
+.btn-success:disabled{ opacity:.4; cursor:not-allowed; }
+
+.btn-xlsx{
+  padding:11px 20px; background:#217346; color:white;
+  border:none; border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  cursor:pointer; transition:background .15s;
+  display:inline-flex; align-items:center; gap:7px;
+  box-shadow:0 4px 12px rgba(33,115,70,.2);
+}
+.btn-xlsx:hover{ background:#185c38; }
+.btn-xlsx:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* Security note */
+.security-note{
+  background:#f0fdf4; border:1px solid #bbf7d0;
+  border-radius:var(--radius-sm); padding:10px 14px;
+  font-size:12.5px; color:#065f46;
+  display:flex; gap:8px; line-height:1.5; margin-top:1rem;
+}
+
+/* STATS */
+.stats-grid{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:1rem;
+}
+.stat-card{
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--radius-sm); padding:.9rem 1.1rem;
+  box-shadow:var(--shadow);
+}
+.stat-label{
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--muted); margin-bottom:4px;
+}
+.stat-value{
+  font-family:var(--mono); font-size:26px; font-weight:500; line-height:1;
+}
+.sv-blue{color:var(--blue)}.sv-green{color:var(--green)}.sv-purple{color:var(--purple)}
+.sv-red{color:var(--red)}.sv-amber{color:var(--amber)}.sv-gray{color:var(--muted)}
+
+/* PROGRESS */
+.prog-wrap{ display:none; }
+.prog-wrap.show{ display:block; }
+.prog-meta{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:.6rem;
+}
+.prog-label{ font-size:13px; font-weight:500; color:var(--ink-3); }
+.prog-pct{ font-family:var(--mono); font-size:13px; color:var(--blue); font-weight:600; }
+.prog-track{
+  height:6px; background:var(--paper-3);
+  border-radius:100px; overflow:hidden; margin-bottom:.7rem;
+}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--blue-d));
+  border-radius:100px; transition:width .35s ease; width:0%;
+}
+.prog-detail{
+  display:flex; gap:1.5rem; font-size:12px; color:var(--muted);
+}
+
+/* LOG */
+.log-box{
+  background:#0d1117; border-radius:var(--radius-sm);
+  padding:1rem 1.1rem; font-family:var(--mono); font-size:11.5px;
+  line-height:1.85; height:240px; overflow-y:auto; color:#c9d1d9;
+}
+.log-box::-webkit-scrollbar{ width:3px; }
+.log-box::-webkit-scrollbar-thumb{ background:#30363d; border-radius:2px; }
+.ll{ display:flex; gap:8px; }
+.lt{ color:rgba(121,133,153,.5); min-width:66px; flex-shrink:0; }
+.lm{ word-break:break-all; }
+.tok{ color:#3fb950; }.ter{ color:#f85149; }.twa{ color:#e3b341; }.tin{ color:#79c0ff; }.tsy{ color:#8b949e; }
+
+/* RESULT */
+.result-box{ display:none; }
+.result-box.show{ display:block; }
+.result-success{
+  background:var(--green-l); border:1px solid rgba(5,150,105,.2);
+  border-radius:var(--radius-sm); padding:14px 16px;
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; font-weight:600; color:var(--green);
+  margin-bottom:1rem;
+}
+.dl-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* TABLE */
+.table-wrap{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; font-size:13px; }
+thead th{
+  text-align:left; padding:9px 1rem;
+  border-bottom:2px solid var(--line);
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--muted); white-space:nowrap;
+  background:var(--paper-2);
+}
+tbody tr{ border-bottom:1px solid var(--line); transition:background .1s; }
+tbody tr:last-child{ border-bottom:none; }
+tbody tr:hover{ background:var(--paper-2); }
+tbody td{ padding:9px 1rem; vertical-align:middle; }
+.badge{
+  display:inline-flex; align-items:center; padding:2px 9px;
+  border-radius:100px; font-size:11px; font-weight:600;
+}
+.b-emit{ background:var(--blue-l); color:var(--blue-d); }
+.b-recv{ background:var(--purple-l); color:var(--purple); }
+.b-canc{ background:var(--red-l); color:var(--red); }
+.b-subs{ background:var(--amber-l); color:var(--amber); }
+.b-even{ background:var(--gray-l); color:var(--muted); }
+.mono{ font-family:var(--mono); }
+.txt-r{ text-align:right; }
+.txt-sm{ font-size:11px; color:var(--muted); }
+
+/* EMPTY */
+.empty{
+  text-align:center; padding:3rem 2rem;
+  color:var(--muted); font-size:13px;
+}
+.empty-icon{ font-size:2.5rem; margin-bottom:.6rem; opacity:.35; }
+
+/* FOOTER */
+.app-footer{
+  text-align:center; padding:2rem 1rem;
+  color:var(--muted); font-size:12px; margin-top:1rem;
+}
+.app-footer a{ color:var(--blue); text-decoration:none; }
+
+@media(max-width:680px){
+  .form-row,.form-row-3{ grid-template-columns:1fr; }
+  .stats-grid{ grid-template-columns:repeat(2,1fr); }
+  .app-header{ padding:0 1rem; }
+  .app-container{ padding:1.5rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">📄</div>
+      <div class="login-logo-text">
+        <h1>NFS-e Lote</h1>
+        <p>Portal Fiscal · ADN Nacional</p>
+      </div>
+    </div>
+
+    <div class="login-badge">🔒 Acesso restrito</div>
+
+    <div class="login-title">Bem-vindo</div>
+    <div class="login-subtitle">Informe suas credenciais para continuar.</div>
+
+    <div class="login-error" id="login-error"></div>
+
+    <div class="form-field">
+      <label>Usuário</label>
+      <input type="text" id="login-user" placeholder="seu.usuario" autocomplete="username">
+    </div>
+    <div class="form-field">
+      <label>Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter') fazerLogin()">
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">
+      Entrar
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+
+  <header class="app-header">
+    <a class="app-logo" href="#">
+      <div class="app-logo-icon">📄</div>
+      <span class="app-logo-text">NFS-e <em>Lote</em></span>
+    </a>
+    <div class="hsp"></div>
+    <div class="app-user">
+      Olá, <strong id="user-name"></strong>
+    </div>
+    <button class="app-logout" onclick="logout()">Sair</button>
+  </header>
+
+  <div class="app-container">
+
+    <!-- CARD CONFIG -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon blue">📥</div>
+        <span class="card-title">Baixar NFS-e em Lote — Portal Nacional (ADN)</span>
+      </div>
+      <div class="card-body">
+
+        <div class="form-row">
+          <div class="fg">
+            <label>Certificado Digital A1 (.pfx / .p12)</label>
+            <div class="drop-zone" id="dz" onclick="document.getElementById('cert-inp').click()">
+              <input type="file" id="cert-inp" accept=".pfx,.p12" onchange="onCert(this)">
+              <div class="drop-zone-icon">📁</div>
+              <div class="drop-zone-text">Clique ou arraste aqui</div>
+              <div class="drop-zone-name" id="cert-name" style="display:none"></div>
+              <div id="cnpj-badges"></div>
+            </div>
+            <p class="hint">e-CNPJ A1. O CNPJ é lido automaticamente do certificado.</p>
+          </div>
+          <div class="fg">
+            <label>Senha do Certificado</label>
+            <input type="password" id="cert-pw" placeholder="••••••••" autocomplete="off" onblur="verificarCert()">
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="fg">
+            <label>Mês</label>
+            <select id="mes">
+              <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+              <option value="3">Março</option><option value="4">Abril</option>
+              <option value="5">Maio</option><option value="6">Junho</option>
+              <option value="7">Julho</option><option value="8">Agosto</option>
+              <option value="9">Setembro</option><option value="10">Outubro</option>
+              <option value="11">Novembro</option><option value="12">Dezembro</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Ano</label>
+            <select id="ano">
+              <option value="2026">2026</option><option value="2025">2025</option>
+              <option value="2024">2024</option><option value="2023">2023</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Ambiente</label>
+            <select id="amb">
+              <option value="producao">Produção</option>
+              <option value="homologacao">Homologação</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-start" onclick="iniciar()">
+          ▶ Iniciar download gratuito
+        </button>
+
+        <div class="security-note">
+          🔒 <span><strong>Privacidade:</strong> o certificado e a senha são usados somente durante o processamento. Nenhum dado fiscal é armazenado permanentemente. Os arquivos temporários são removidos automaticamente.</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CARD RESULTADO -->
+    <div class="card" id="result-card" style="display:none">
+      <div class="card-header">
+        <div class="card-header-icon green">📊</div>
+        <span class="card-title">Resultado do processamento</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">Atualização em tempo real</span>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:1.25rem">
+
+        <!-- Progresso -->
+        <div class="prog-wrap" id="prog-wrap">
+          <div class="prog-meta">
+            <span class="prog-label" id="prog-label">Consultando...</span>
+            <span class="prog-pct" id="prog-pct">0%</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+          <div class="prog-detail">
+            <span>NSU: <strong id="prog-nsu">0</strong></span>
+            <span>Lote: <strong id="prog-lote">0</strong></span>
+            <span>Encontrados: <strong id="prog-found">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-grid" style="display:none">
+          <div class="stat-card"><div class="stat-label">Analisados</div><div class="stat-value sv-blue" id="st-analisados">0</div></div>
+          <div class="stat-card"><div class="stat-label">Emitidas</div><div class="stat-value sv-blue" id="st-emitidas">0</div></div>
+          <div class="stat-card"><div class="stat-label">Recebidas</div><div class="stat-value sv-purple" id="st-recebidas">0</div></div>
+          <div class="stat-card"><div class="stat-label">Canceladas</div><div class="stat-value sv-red" id="st-canceladas">0</div></div>
+          <div class="stat-card"><div class="stat-label">Substituídas</div><div class="stat-value sv-amber" id="st-substituidas">0</div></div>
+          <div class="stat-card"><div class="stat-label">Eventos</div><div class="stat-value sv-gray" id="st-eventos">0</div></div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-box" id="log-box">
+          <div class="ll"><span class="lt"></span><span class="lm tsy">Pronto. Configure e clique em Iniciar.</span></div>
+        </div>
+
+        <!-- Resultado final -->
+        <div class="result-box" id="result-final">
+          <div class="result-success">✅ Consulta concluída com sucesso.</div>
+          <div class="dl-btns">
+            <button class="btn-success" id="btn-zip" onclick="dl('zip')" disabled>⬇ XMLs (.zip)</button>
+            <button class="btn-xlsx"    id="btn-xlsx" onclick="dl('xlsx')" disabled>⬇ Planilha Excel</button>
+            <button class="btn-outline" id="btn-rel"  onclick="dl('relatorio')" disabled>⬇ Relatório HTML</button>
+            <button class="btn-outline" onclick="reiniciar()">↺ Nova consulta</button>
+          </div>
+        </div>
+
+        <!-- Botão verificar manualmente (aparece durante processamento) -->
+        <div id="btn-verificar-wrap" style="display:none;margin-top:.5rem">
+          <button class="btn-outline" onclick="verificarManual()" style="width:100%;justify-content:center">
+            🔄 Verificar status agora
+          </button>
+          <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">
+            Se o log parou de atualizar, clique para verificar se o download terminou.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="card" id="table-card" style="display:none">
+      <div class="card-header">
+        <div class="card-header-icon purple">📋</div>
+        <span class="card-title">Notas encontradas</span>
+        <span id="table-count" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div id="table-empty" class="empty">
+        <div class="empty-icon">📂</div>Nenhuma nota encontrada ainda.
+      </div>
+      <div class="table-wrap" id="table-wrap" style="display:none">
+        <table>
+          <thead><tr>
+            <th>Tipo</th><th>Número</th><th>Emissão</th>
+            <th>Tomador / Prestador</th><th>Município</th>
+            <th>Valor R$</th><th>NSU</th>
+          </tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="app-footer">
+      NFS-e Lote · Portal Nacional ADN · Dados processados localmente com seu certificado digital
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = '';  // mesmo domínio
+let token = localStorage.getItem('nfse_token');
+let username = localStorage.getItem('nfse_user');
+let jobId = null, polling = null, logIdx = 0, certFile = null;
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(function(){
+  if(token){ mostrarApp(); }
+  // Preenche mês/ano atual
+  const n = new Date();
+  document.getElementById('mes').value = n.getMonth()+1;
+  for(let o of document.getElementById('ano').options)
+    if(parseInt(o.value)===n.getFullYear()){ o.selected=true; break; }
+})();
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+async function fazerLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value.trim();
+  if(!u||!p){ showLoginError('Preencha usuário e senha.'); return; }
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='Entrando...';
+  document.getElementById('login-error').style.display='none';
+  try{
+    const r=await fetch(API+'/api/login',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:u,password:p})});
+    const d=await r.json();
+    if(d.error){ showLoginError(d.error); btn.disabled=false; btn.textContent='Entrar'; return; }
+    token=d.token; username=d.username;
+    localStorage.setItem('nfse_token',token); localStorage.setItem('nfse_user',username);
+    mostrarApp();
+  }catch(e){ showLoginError('Erro de conexão.'); btn.disabled=false; btn.textContent='Entrar'; }
+}
+function showLoginError(msg){ const e=document.getElementById('login-error'); e.textContent=msg; e.style.display='block'; }
+function mostrarApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('user-name').textContent=username||'Usuário';
+}
+function logout(){
+  token=null; username=null;
+  localStorage.removeItem('nfse_token'); localStorage.removeItem('nfse_user');
+  location.reload();
+}
+
+// ── Certificado ───────────────────────────────────────────────────────────────
+function onCert(inp){
+  if(!inp.files.length) return;
+  certFile=inp.files[0];
+  document.getElementById('cert-name').textContent='✓ '+certFile.name;
+  document.getElementById('cert-name').style.display='block';
+  const pw=document.getElementById('cert-pw').value;
+  if(pw) verificarCert();
+}
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault(); dz.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f&&(f.name.endsWith('.pfx')||f.name.endsWith('.p12'))){
+    certFile=f; document.getElementById('cert-name').textContent='✓ '+f.name;
+    document.getElementById('cert-name').style.display='block';
+    const pw=document.getElementById('cert-pw').value; if(pw) verificarCert();
+  }
+});
+
+async function verificarCert(){
+  if(!certFile||!token) return;
+  const pw=document.getElementById('cert-pw').value; if(!pw) return;
+  const fd=new FormData(); fd.append('cert',certFile); fd.append('senha',pw);
+  try{
+    const r=await fetch(API+'/api/check_cert',{method:'POST',headers:{Authorization:'Bearer '+token},body:fd});
+    const d=await r.json();
+    const div=document.getElementById('cnpj-badges'); div.innerHTML='';
+    if(d.cnpjs&&d.cnpjs.length) d.cnpjs.forEach(c=>{
+      const s=document.createElement('span'); s.className='cnpj-badge'; s.textContent='🏢 '+c; div.appendChild(s);
+    });
+  }catch(e){}
+}
+
+// ── Log ───────────────────────────────────────────────────────────────────────
+function log(tag,msg){
+  const box=document.getElementById('log-box');
+  const ts=new Date().toTimeString().slice(0,8);
+  const cls={ok:'tok',erro:'ter',warn:'twa',info:'tin',sys:'tsy'}[tag]||'tin';
+  const d=document.createElement('div'); d.className='ll';
+  d.innerHTML=`<span class="lt">${ts}</span><span class="lm ${cls}">${esc(msg)}</span>`;
+  box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Iniciar ───────────────────────────────────────────────────────────────────
+async function iniciar(){
+  if(!certFile){ alert('Selecione o certificado .pfx ou .p12.'); return; }
+  const pw=document.getElementById('cert-pw').value;
+  if(!pw){ alert('Informe a senha do certificado.'); return; }
+
+  document.getElementById('btn-start').disabled=true;
+  document.getElementById('btn-start').textContent='⏳ Processando...';
+  document.getElementById('result-card').style.display='block';
+  document.getElementById('table-card').style.display='block';
+  document.getElementById('prog-wrap').classList.add('show');
+  document.getElementById('result-final').classList.remove('show');
+  document.getElementById('stats-grid').style.display='none';
+  document.getElementById('log-box').innerHTML='';
+  document.getElementById('table-body').innerHTML='';
+  document.getElementById('table-wrap').style.display='none';
+  document.getElementById('table-empty').style.display='block';
+  document.getElementById('table-count').textContent='';
+  logIdx=0;
+
+  const fd=new FormData();
+  fd.append('cert',certFile); fd.append('senha',pw);
+  fd.append('mes',document.getElementById('mes').value);
+  fd.append('ano',document.getElementById('ano').value);
+  fd.append('ambiente',document.getElementById('amb').value);
+
+  try{
+    const r=await fetch(API+'/api/start',{method:'POST',headers:{Authorization:'Bearer '+token},body:fd});
+    if(r.status===401){ logout(); return; }
+    const d=await r.json();
+    if(d.error){ alert(d.error); reset(); return; }
+    jobId=d.job_id;
+    log('ok','Job iniciado: '+jobId);
+    log('info','CNPJs: '+d.cnpjs.join(', '));
+    log('info','⏳ Aguarde — o processamento pode levar alguns minutos...');
+    polling=setInterval(tick,2000);
+    // Mostra botão verificar após 10s
+    setTimeout(()=>{
+      document.getElementById('btn-verificar-wrap').style.display='block';
+    }, 10000);
+  }catch(e){ alert('Erro: '+e.message); reset(); }
+}
+
+// ── Polling ───────────────────────────────────────────────────────────────────
+let errosTick = 0;
+async function tick(){
+  if(!jobId) return;
+  try{
+    const r=await fetch(API+'/api/status/'+jobId,{headers:{Authorization:'Bearer '+token}});
+    if(r.status===401){ clearInterval(polling); logout(); return; }
+    const d=await r.json(); if(d.error){ clearInterval(polling); reset(); return; }
+    errosTick = 0; // reset erros ao ter sucesso
+
+    d.logs.slice(logIdx).forEach(l=>log(l.tag,l.msg)); logIdx=d.logs.length;
+    document.getElementById('prog-fill').style.width=d.pct+'%';
+    document.getElementById('prog-pct').textContent=d.pct+'%';
+    document.getElementById('prog-label').textContent=d.status==='done'?'Concluído.':'Consultando lotes...';
+    document.getElementById('prog-nsu').textContent=d.nsu;
+    document.getElementById('prog-lote').textContent=d.lote;
+    document.getElementById('prog-found').textContent=d.docs.length;
+
+    const s=d.stats||{};
+    if(Object.keys(s).length){
+      document.getElementById('stats-grid').style.display='grid';
+      document.getElementById('st-analisados').textContent=s.analisados||0;
+      document.getElementById('st-emitidas').textContent=s.emitidas||0;
+      document.getElementById('st-recebidas').textContent=s.recebidas||0;
+      document.getElementById('st-canceladas').textContent=s.canceladas||0;
+      document.getElementById('st-substituidas').textContent=s.substituidas||0;
+      document.getElementById('st-eventos').textContent=s.eventos||0;
+    }
+
+    if(d.docs.length) renderTable(d.docs);
+
+    // Mostra botões assim que tiver documentos — não espera o "done"
+    if(d.docs.length>0){
+      ['btn-zip','btn-xlsx','btn-rel'].forEach(id=>document.getElementById(id).disabled=false);
+    }
+
+    if(d.status==='done'){
+      clearInterval(polling); reset();
+      document.getElementById('prog-fill').style.width='100%';
+      document.getElementById('prog-pct').textContent='100%';
+      document.getElementById('prog-label').textContent='Concluído.';
+      document.getElementById('result-final').classList.add('show');
+    }
+  }catch(e){
+    errosTick++;
+    // Após 5 erros consecutivos, verifica se o job terminou mesmo sem resposta
+    if(errosTick >= 5){
+      log('warn','Conexão instável. Verificando status...');
+      errosTick = 0;
+    }
+  }
+}
+
+// ── Tabela ────────────────────────────────────────────────────────────────────
+function renderTable(docs){
+  if(!docs.length) return;
+  document.getElementById('table-empty').style.display='none';
+  document.getElementById('table-wrap').style.display='block';
+  document.getElementById('table-count').textContent=docs.length+' nota(s)';
+  const tipos={emitidas:['b-emit','⬆ Emitida'],recebidas:['b-recv','⬇ Recebida'],
+                canceladas:['b-canc','✕ Cancelada'],substituidas:['b-subs','↺ Substituída'],eventos:['b-even','◎ Evento']};
+  const tb=document.getElementById('table-body'); tb.innerHTML='';
+  docs.forEach(r=>{
+    const [cls,lbl]=tipos[r.tipo]||['b-even','—'];
+    const emp=r.tipo==='emitidas'?esc(r.tomador_nome||r.tomador_cnpj||'—'):esc(r.prestador_nome||r.prestador_cnpj||'—');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="badge ${cls}">${lbl}</span></td>
+      <td class=mono>${r.numero||'—'}</td><td>${r.data_emissao||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${emp}">${emp}</td>
+      <td>${r.municipio||'—'}</td>
+      <td class="mono txt-r">${r.valor||'—'}</td>
+      <td class="mono txt-sm">${r.nsu}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ── Verificar manualmente ─────────────────────────────────────────────────────
+async function verificarManual(){
+  log('sys','Verificando status...');
+  await tick();
+  if(jobId){
+    // Força exibição dos botões se tiver docs
+    try{
+      const r=await fetch(API+'/api/status/'+jobId,{headers:{Authorization:'Bearer '+token}});
+      const d=await r.json();
+      if(d.docs && d.docs.length>0){
+        ['btn-zip','btn-xlsx','btn-rel'].forEach(id=>document.getElementById(id).disabled=false);
+        document.getElementById('result-final').classList.add('show');
+        document.getElementById('prog-label').textContent='Concluído.';
+        document.getElementById('prog-fill').style.width='100%';
+        document.getElementById('prog-pct').textContent='100%';
+        log('ok',`✅ ${d.docs.length} nota(s) encontrada(s). Clique em Baixar para exportar!`);
+        clearInterval(polling); reset();
+      } else {
+        log('info','Ainda processando... aguarde mais um pouco.');
+      }
+    }catch(e){ log('warn','Erro ao verificar: '+e.message); }
+  }
+}
+function dl(tipo){ if(jobId) window.location=API+'/api/'+tipo+'/'+jobId+'?token='+token; }
+
+// ── Reset / Reiniciar ─────────────────────────────────────────────────────────
+function reset(){ document.getElementById('btn-start').disabled=false; document.getElementById('btn-start').textContent='▶ Iniciar download gratuito'; }
+async function reiniciar(){
+  if(jobId) await fetch(API+'/api/limpar/'+jobId,{method:'POST',headers:{Authorization:'Bearer '+token}}).catch(()=>{});
+  jobId=null; logIdx=0;
+  document.getElementById('result-card').style.display='none';
+  document.getElementById('table-card').style.display='none';
+  document.getElementById('result-final').classList.remove('show');
+  document.getElementById('prog-wrap').classList.remove('show');
+  document.getElementById('stats-grid').style.display='none';
+  reset();
+}
+</script>
+</body>
+</html>
