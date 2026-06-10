@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NFS-e Cloud v6 — com autenticação, deploy-ready"""
+"""NFS-e Cloud v7 — com autenticação, persistência em disco, deploy-ready"""
 import os,sys,base64,gzip,re,csv,io,zipfile,shutil,tempfile,threading,uuid,json
 from pathlib import Path
 from datetime import datetime,date,timedelta
@@ -14,6 +14,25 @@ WORK_DIR=Path(tempfile.gettempdir())/"nfse_work"; WORK_DIR.mkdir(exist_ok=True)
 jobs:dict={}
 URL_ADN={"producao":"https://adn.nfse.gov.br/contribuintes/DFe","homologacao":"https://adn.producaorestrita.nfse.gov.br/contribuintes/DFe"}
 MESES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+
+# ── Persistência em disco ─────────────────────────────────────────────────────
+def save_state(jid):
+    """Salva estado do job em disco para sobreviver a reinicializações"""
+    j=jobs.get(jid)
+    if not j: return
+    pasta=WORK_DIR/jid; pasta.mkdir(exist_ok=True)
+    state={k:v for k,v in j.items() if k!="docs"}
+    state["docs"]=[{k2:v2 for k2,v2 in d.items() if k2!="_xml"} for d in j.get("docs",[])]
+    try: (pasta/"state.json").write_text(json.dumps(state,default=str,ensure_ascii=False),encoding="utf-8")
+    except: pass
+
+def load_state(jid):
+    """Carrega estado do job do disco"""
+    sf=WORK_DIR/jid/"state.json"
+    if sf.exists():
+        try: return json.loads(sf.read_text(encoding="utf-8"))
+        except: pass
+    return None
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 def get_users():
@@ -60,7 +79,7 @@ def requer_login(f):
         return f(*a,**kw)
     return dec
 
-# ── NFS-e logic (igual ao proxy local) ────────────────────────────────────────
+# ── NFS-e logic ────────────────────────────────────────────────────────────────
 def ler_cnpjs(pfx_path,senha):
     try:
         from cryptography.hazmat.primitives.serialization import pkcs12
@@ -157,6 +176,7 @@ def worker(jid,pfx,senha,cnpjs,ambiente,mes,ano):
             if pfx and os.path.exists(pfx): os.unlink(pfx)
         except: pass
         for d in job.get("docs",[]): d.pop("_xml",None)
+        save_state(jid)  # Salva estado final em disco
 
 def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
     from requests_pkcs12 import get as pkcs12_get
@@ -169,6 +189,7 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
     L("info",f"CNPJs: {', '.join(cnpjs)}")
     base=URL_ADN[ambiente]; pasta=WORK_DIR/jid; pasta.mkdir(exist_ok=True)
     stats=dict(analisados=0,no_periodo=0,emitidas=0,recebidas=0,canceladas=0,substituidas=0,eventos=0); docs=[]
+    save_counter=0
     for cnpj in cnpjs:
         L("info",f"▶ CNPJ {cnpj}"); nsu=0; lote=1; parou=False
         while not parou:
@@ -188,7 +209,6 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
             if r.status_code in(204,404): L("ok",f"Fim ({cnpj})."); break
             if r.status_code in(401,403): L("erro",f"Acesso negado {r.status_code}."); break
             if r.status_code==400:
-                # E2243 = CNPJ não autorizado para este certificado — pula para o próximo
                 try:
                     erros=r.json().get("Erros",[])
                     codigos=[e.get("Codigo","") for e in erros]
@@ -229,6 +249,9 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
                 else: emp=m.get("motivo","") or m.get("chave_cancelada","")[:20]
                 L("ok",f"  [{m['tipo']}] NSU {nsu_doc} | {m['data_emissao']} | {emp[:45]}")
             nsu=ultimo+1; lote+=1; job["pct"]=min(90,job.get("pct",0)+1)
+            # Salva estado no disco a cada 5 lotes para persistência
+            save_counter+=1
+            if save_counter%5==0: save_state(jid)
         if parou: L("ok",f"  Período concluído para {cnpj}.")
     job.update(pct=100,status="done",fim=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),stats=stats,docs=docs)
     L("ok","─"*52)
@@ -236,7 +259,7 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
     L("ok",f"Emitidas: {stats['emitidas']} | Recebidas: {stats['recebidas']}")
     L("ok",f"Canceladas: {stats['canceladas']} | Substituídas: {stats['substituidas']} | Eventos: {stats['eventos']}")
 
-# ── XLSX e HTML (mesmo do proxy local) ────────────────────────────────────────
+# ── XLSX e HTML ────────────────────────────────────────────────────────────────
 def gerar_xlsx(job):
     from openpyxl import Workbook
     from openpyxl.styles import Font,PatternFill,Alignment,Border,Side
@@ -370,7 +393,7 @@ def login():
 
 @app.route("/api/ping")
 @requer_login
-def ping(): return jsonify(ok=True,version="6.0")
+def ping(): return jsonify(ok=True,version="7.0")
 
 @app.route("/api/health")
 def health(): return jsonify(status="ok")
@@ -414,16 +437,29 @@ def start():
 @requer_login
 def status(jid):
     j=jobs.get(jid)
+    # Se não está na memória (ex: reinicialização do servidor), tenta carregar do disco
+    if not j:
+        j=load_state(jid)
+        if j: jobs[jid]=j  # Restaura na memória
     if not j: return jsonify(error="não encontrado"),404
+    # Suporte a paginação de logs: ?since=N retorna apenas logs a partir do índice N
+    since=int(request.args.get("since",0))
+    all_logs=j.get("logs",[])
     docs=[{k:v for k,v in d.items() if k!="_xml"} for d in j.get("docs",[])]
-    return jsonify(status=j["status"],pct=j["pct"],nsu=j.get("nsu_atual",0),lote=j.get("lote",0),
-                   cnpjs=j.get("cnpjs",[]),stats=j.get("stats",{}),logs=j.get("logs",[])[-400:],docs=docs,
-                   inicio=j.get("inicio",""),fim=j.get("fim",""))
+    return jsonify(
+        status=j["status"],pct=j["pct"],nsu=j.get("nsu_atual",0),lote=j.get("lote",0),
+        cnpjs=j.get("cnpjs",[]),stats=j.get("stats",{}),
+        logs=all_logs[since:],        # Apenas logs novos desde `since`
+        total_logs=len(all_logs),     # Total para o cliente rastrear corretamente
+        docs=docs,
+        inicio=j.get("inicio",""),fim=j.get("fim","")
+    )
 
 @app.route("/api/zip/<jid>")
 @requer_login
 def get_zip(jid):
     j=jobs.get(jid)
+    if not j: j=load_state(jid)
     if not j: return "não encontrado",404
     buf=io.BytesIO(); pasta=WORK_DIR/jid
     with zipfile.ZipFile(buf,"w",zipfile.ZIP_DEFLATED) as zf:
@@ -435,6 +471,7 @@ def get_zip(jid):
 @requer_login
 def get_xlsx(jid):
     j=jobs.get(jid)
+    if not j: j=load_state(jid)
     if not j: return "não encontrado",404
     buf=gerar_xlsx(j); mn=MESES[j.get("mes",1)-1][:3]; an=j.get("ano","")
     return send_file(buf,mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -444,9 +481,9 @@ def get_xlsx(jid):
 @requer_login
 def get_relatorio(jid):
     j=jobs.get(jid)
+    if not j: j=load_state(jid)
     if not j: return "não encontrado",404
     mn=MESES[j.get("mes",1)-1]; an=j.get("ano","")
-    # HTML do relatório inline
     docs=j.get("docs",[]); stats=j.get("stats",{}); cnpjs=j.get("cnpjs",[]); mes=j.get("mes",1); ano2=j.get("ano",2026)
     periodo=f"{MESES[mes-1]}/{ano2}"; agora=j.get("fim",datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
     vt=sum(float(d.get("valor","0").replace(",",".") or 0) for d in docs if d.get("tipo") in("emitidas","recebidas") and d.get("valor"))
@@ -482,7 +519,7 @@ tbody tr{{border-bottom:1px solid #f0f1f4}}tbody tr:hover{{background:#f8f9fb}}t
 <div class=tw><div class=ts><table><thead><tr><th>Tipo</th><th>Número</th><th>Emissão</th><th>Tomador/Prestador</th><th>Município</th><th>Valor R$</th><th>Chave</th></tr></thead>
 <tbody>{"".join(linhas) or '<tr><td colspan=7 style="text-align:center;padding:2rem;color:#aaa">Nenhuma nota.</td></tr>'}</tbody></table></div></div></div>
 <footer>NFS-e Lote · ADN · {agora}</footer></body></html>"""
-    return Response(html,mimetype="text/html",headers={"Content-Disposition":f"attachment; filename=Relatorio_{mn}{an2}_{jid}.html"})
+    return Response(html,mimetype="text/html",headers={"Content-Disposition":f"attachment; filename=Relatorio_{mn}{an}_{jid}.html"})
 
 @app.route("/api/limpar/<jid>",methods=["POST"])
 @requer_login
@@ -504,5 +541,5 @@ def frontend(path):
 
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
-    print(f"\n  NFS-e Cloud v6 — porta {port}\n")
+    print(f"\n  NFS-e Cloud v7 — porta {port}\n")
     app.run(host="0.0.0.0",port=port,debug=False,threaded=True)
