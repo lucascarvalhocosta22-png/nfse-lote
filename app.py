@@ -172,16 +172,18 @@ def _run(jid,pfx,senha,cnpjs,ambiente,mes,ano,L):
     for cnpj in cnpjs:
         L("info",f"▶ CNPJ {cnpj}"); nsu=0; lote=1; parou=False
         while not parou:
-            if lote>1: time.sleep(0.3)
+            if lote>1: time.sleep(0.1)
             job["nsu_atual"]=nsu; job["lote"]=lote; r=None
+            L("info",f"  [{cnpj}] NSU {nsu} lote {lote}...")
             for t in range(1,4):
                 try:
-                    r=pkcs12_get(f"{base}/{nsu}",params={"cnpjConsulta":cnpj},headers={"Accept":"application/json"},pkcs12_filename=pfx,pkcs12_password=senha,timeout=120)
+                    r=pkcs12_get(f"{base}/{nsu}",params={"cnpjConsulta":cnpj},headers={"Accept":"application/json"},pkcs12_filename=pfx,pkcs12_password=senha,timeout=60)
                     if r.status_code==429:
                         w=20*t; L("warn",f"429 — aguardando {w}s..."); time.sleep(w); r=None; continue
                     break
-                except Exception as e: L("warn",f"Tentativa {t}/3: {e}");
-                if t<3: time.sleep(5*t)
+                except Exception as e:
+                    L("warn",f"Tentativa {t}/3 falhou: {e}")
+                    if t<3: time.sleep(3*t)
             if r is None: L("erro",f"Falha ({cnpj})."); break
             if r.status_code in(204,404): L("ok",f"Fim ({cnpj})."); break
             if r.status_code in(401,403): L("erro",f"Acesso negado {r.status_code}."); break
