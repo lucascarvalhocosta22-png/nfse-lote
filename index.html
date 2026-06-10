@@ -10,7 +10,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  /* Core */
   --ink:       #0d1117;
   --ink-2:     #1c2333;
   --ink-3:     #2d3748;
@@ -19,8 +18,6 @@
   --paper-3:   #eef0f4;
   --line:      #e2e5ed;
   --muted:     #8892a4;
-
-  /* Brand */
   --blue:      #2563eb;
   --blue-d:    #1d4ed8;
   --blue-l:    #dbeafe;
@@ -33,12 +30,10 @@
   --amber:     #d97706;
   --amber-l:   #fef3c7;
   --gray-l:    #f3f4f6;
-
   --radius:    12px;
   --radius-sm: 8px;
   --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
   --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
-
   --mono: 'DM Mono', monospace;
   --sans: 'DM Sans', sans-serif;
 }
@@ -52,9 +47,7 @@ body{
   min-height: 100vh;
 }
 
-/* ════════════════════════════════════════════════
-   LOGIN SCREEN
-════════════════════════════════════════════════ */
+/* LOGIN */
 #login-screen{
   min-height: 100vh;
   display: flex;
@@ -65,8 +58,6 @@ body{
   position: relative;
   overflow: hidden;
 }
-
-/* Geometric bg */
 #login-screen::before{
   content:'';
   position:absolute;
@@ -77,8 +68,6 @@ body{
     radial-gradient(circle at 60% 80%, rgba(5,150,105,.1) 0%, transparent 40%);
   pointer-events:none;
 }
-
-/* Grid lines */
 #login-screen::after{
   content:'';
   position:absolute;
@@ -88,7 +77,6 @@ body{
   background-size: 40px 40px;
   pointer-events:none;
 }
-
 .login-card{
   background: rgba(255,255,255,.97);
   border-radius: 20px;
@@ -100,17 +88,11 @@ body{
   z-index: 1;
   animation: loginIn .4s cubic-bezier(.22,.68,0,1.2);
 }
-
 @keyframes loginIn{
   from{ opacity:0; transform:translateY(24px) scale(.97); }
   to{   opacity:1; transform:translateY(0)    scale(1);   }
 }
-
-.login-logo{
-  display:flex; align-items:center; gap:12px;
-  margin-bottom:2rem;
-}
-
+.login-logo{ display:flex; align-items:center; gap:12px; margin-bottom:2rem; }
 .login-logo-icon{
   width:48px; height:48px;
   background: linear-gradient(135deg, var(--blue), var(--blue-d));
@@ -119,27 +101,12 @@ body{
   font-size:22px;
   box-shadow: 0 4px 12px rgba(37,99,235,.4);
 }
-
-.login-logo-text h1{
-  font-size:20px; font-weight:700; color:var(--ink); line-height:1.1;
-}
-.login-logo-text p{
-  font-size:12px; color:var(--muted); margin-top:1px;
-}
-
-.login-title{
-  font-size:24px; font-weight:700; color:var(--ink);
-  margin-bottom:.4rem;
-}
-.login-subtitle{
-  font-size:14px; color:var(--muted); margin-bottom:2rem;
-}
-
+.login-logo-text h1{ font-size:20px; font-weight:700; color:var(--ink); line-height:1.1; }
+.login-logo-text p{ font-size:12px; color:var(--muted); margin-top:1px; }
+.login-title{ font-size:24px; font-weight:700; color:var(--ink); margin-bottom:.4rem; }
+.login-subtitle{ font-size:14px; color:var(--muted); margin-bottom:2rem; }
 .form-field{ margin-bottom:1.2rem; }
-.form-field label{
-  display:block; font-size:13px; font-weight:600;
-  color:var(--ink-3); margin-bottom:6px;
-}
+.form-field label{ display:block; font-size:13px; font-weight:600; color:var(--ink-3); margin-bottom:6px; }
 .form-field input{
   width:100%;
   border: 1.5px solid var(--line);
@@ -152,12 +119,8 @@ body{
   outline: none;
   transition: border-color .15s, box-shadow .15s;
 }
-.form-field input:focus{
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
-}
+.form-field input:focus{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
 .form-field input::placeholder{ color: var(--muted); font-size:14px; }
-
 .login-btn{
   width:100%; padding:13px;
   background: linear-gradient(135deg, var(--blue), var(--blue-d));
@@ -171,7 +134,6 @@ body{
 .login-btn:hover{ opacity:.9; }
 .login-btn:active{ transform:scale(.98); }
 .login-btn:disabled{ opacity:.5; cursor:not-allowed; }
-
 .login-error{
   background: var(--red-l); color: var(--red);
   border: 1px solid rgba(220,38,38,.2);
@@ -179,7 +141,6 @@ body{
   font-size:13px; font-weight:500;
   margin-bottom:1rem; display:none;
 }
-
 .login-badge{
   display:inline-flex; align-items:center; gap:6px;
   font-size:11px; font-weight:600; color:var(--green);
@@ -188,12 +149,8 @@ body{
   border: 1px solid rgba(5,150,105,.2);
 }
 
-/* ════════════════════════════════════════════════
-   MAIN APP
-════════════════════════════════════════════════ */
+/* APP */
 #app{ display:none; min-height:100vh; background:var(--paper-2); }
-
-/* HEADER */
 .app-header{
   background:var(--paper);
   border-bottom:1px solid var(--line);
@@ -203,10 +160,7 @@ body{
   position:sticky; top:0; z-index:100;
   box-shadow: 0 1px 0 var(--line);
 }
-.app-logo{
-  display:flex; align-items:center; gap:9px;
-  text-decoration:none;
-}
+.app-logo{ display:flex; align-items:center; gap:9px; text-decoration:none; }
 .app-logo-icon{
   width:30px; height:30px;
   background:linear-gradient(135deg,var(--blue),var(--blue-d));
@@ -214,15 +168,10 @@ body{
   display:flex; align-items:center; justify-content:center;
   font-size:14px;
 }
-.app-logo-text{
-  font-size:16px; font-weight:700; color:var(--ink);
-}
+.app-logo-text{ font-size:16px; font-weight:700; color:var(--ink); }
 .app-logo-text em{ color:var(--blue); font-style:normal; }
 .hsp{ flex:1; }
-.app-user{
-  display:flex; align-items:center; gap:8px;
-  font-size:13px; color:var(--muted);
-}
+.app-user{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
 .app-user strong{ color:var(--ink); }
 .app-logout{
   padding:6px 12px; background:transparent; color:var(--muted);
@@ -231,7 +180,6 @@ body{
 }
 .app-logout:hover{ border-color:var(--red); color:var(--red); }
 
-/* CONTAINER */
 .app-container{
   max-width: 1060px;
   margin: 0 auto;
@@ -241,7 +189,6 @@ body{
   gap: 1.5rem;
 }
 
-/* CARDS */
 .card{
   background:var(--paper);
   border:1px solid var(--line);
@@ -268,7 +215,6 @@ body{
 }
 .card-body{ padding:1.5rem; }
 
-/* FORM */
 .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
 .form-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
 .fg{ display:flex; flex-direction:column; gap:5px; }
@@ -279,13 +225,10 @@ body{
   color:var(--ink); background:var(--paper); outline:none;
   transition:border-color .15s, box-shadow .15s; appearance:none;
 }
-.fg input:focus,.fg select:focus{
-  border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.08);
-}
+.fg input:focus,.fg select:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.08); }
 .fg input::placeholder{ color:var(--muted); }
 .fg .hint{ font-size:11px; color:var(--muted); line-height:1.4; }
 
-/* File drop */
 .drop-zone{
   border:1.5px dashed var(--line); border-radius:var(--radius-sm);
   padding:1rem; text-align:center; cursor:pointer;
@@ -304,7 +247,6 @@ body{
   font-size:12px; font-weight:600; font-family:var(--mono); margin-top:5px;
 }
 
-/* Buttons */
 .btn-primary{
   width:100%; padding:12px;
   background:linear-gradient(135deg,var(--blue),var(--blue-d));
@@ -350,7 +292,15 @@ body{
 .btn-xlsx:hover{ background:#185c38; }
 .btn-xlsx:disabled{ opacity:.4; cursor:not-allowed; }
 
-/* Security note */
+.btn-check{
+  padding:6px 12px; background:transparent; color:var(--blue);
+  border:1.5px solid var(--blue-l); border-radius:var(--radius-sm);
+  font-family:var(--sans); font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .15s;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.btn-check:hover{ background:var(--blue-l); }
+
 .security-note{
   background:#f0fdf4; border:1px solid #bbf7d0;
   border-radius:var(--radius-sm); padding:10px 14px;
@@ -358,7 +308,6 @@ body{
   display:flex; gap:8px; line-height:1.5; margin-top:1rem;
 }
 
-/* STATS */
 .stats-grid{
   display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
   gap:1rem;
@@ -368,39 +317,24 @@ body{
   border-radius:var(--radius-sm); padding:.9rem 1.1rem;
   box-shadow:var(--shadow);
 }
-.stat-label{
-  font-size:10px; font-weight:700; text-transform:uppercase;
-  letter-spacing:.08em; color:var(--muted); margin-bottom:4px;
-}
-.stat-value{
-  font-family:var(--mono); font-size:26px; font-weight:500; line-height:1;
-}
+.stat-label{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
+.stat-value{ font-family:var(--mono); font-size:26px; font-weight:500; line-height:1; }
 .sv-blue{color:var(--blue)}.sv-green{color:var(--green)}.sv-purple{color:var(--purple)}
 .sv-red{color:var(--red)}.sv-amber{color:var(--amber)}.sv-gray{color:var(--muted)}
 
-/* PROGRESS */
 .prog-wrap{ display:none; }
 .prog-wrap.show{ display:block; }
-.prog-meta{
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:.6rem;
-}
+.prog-meta{ display:flex; justify-content:space-between; align-items:center; margin-bottom:.6rem; }
 .prog-label{ font-size:13px; font-weight:500; color:var(--ink-3); }
 .prog-pct{ font-family:var(--mono); font-size:13px; color:var(--blue); font-weight:600; }
-.prog-track{
-  height:6px; background:var(--paper-3);
-  border-radius:100px; overflow:hidden; margin-bottom:.7rem;
-}
+.prog-track{ height:6px; background:var(--paper-3); border-radius:100px; overflow:hidden; margin-bottom:.7rem; }
 .prog-fill{
   height:100%;
   background:linear-gradient(90deg,var(--blue),var(--blue-d));
   border-radius:100px; transition:width .35s ease; width:0%;
 }
-.prog-detail{
-  display:flex; gap:1.5rem; font-size:12px; color:var(--muted);
-}
+.prog-detail{ display:flex; gap:1.5rem; font-size:12px; color:var(--muted); align-items:center; flex-wrap:wrap; }
 
-/* LOG */
 .log-box{
   background:#0d1117; border-radius:var(--radius-sm);
   padding:1rem 1.1rem; font-family:var(--mono); font-size:11.5px;
@@ -413,7 +347,6 @@ body{
 .lm{ word-break:break-all; }
 .tok{ color:#3fb950; }.ter{ color:#f85149; }.twa{ color:#e3b341; }.tin{ color:#79c0ff; }.tsy{ color:#8b949e; }
 
-/* RESULT */
 .result-box{ display:none; }
 .result-box.show{ display:block; }
 .result-success{
@@ -423,9 +356,15 @@ body{
   font-size:14px; font-weight:600; color:var(--green);
   margin-bottom:1rem;
 }
+.result-processing{
+  background:var(--blue-l); border:1px solid rgba(37,99,235,.2);
+  border-radius:var(--radius-sm); padding:14px 16px;
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; font-weight:600; color:var(--blue);
+  margin-bottom:1rem;
+}
 .dl-btns{ display:flex; gap:10px; flex-wrap:wrap; }
 
-/* TABLE */
 .table-wrap{ overflow-x:auto; }
 table{ width:100%; border-collapse:collapse; font-size:13px; }
 thead th{
@@ -439,10 +378,7 @@ tbody tr{ border-bottom:1px solid var(--line); transition:background .1s; }
 tbody tr:last-child{ border-bottom:none; }
 tbody tr:hover{ background:var(--paper-2); }
 tbody td{ padding:9px 1rem; vertical-align:middle; }
-.badge{
-  display:inline-flex; align-items:center; padding:2px 9px;
-  border-radius:100px; font-size:11px; font-weight:600;
-}
+.badge{ display:inline-flex; align-items:center; padding:2px 9px; border-radius:100px; font-size:11px; font-weight:600; }
 .b-emit{ background:var(--blue-l); color:var(--blue-d); }
 .b-recv{ background:var(--purple-l); color:var(--purple); }
 .b-canc{ background:var(--red-l); color:var(--red); }
@@ -452,18 +388,10 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
 .txt-r{ text-align:right; }
 .txt-sm{ font-size:11px; color:var(--muted); }
 
-/* EMPTY */
-.empty{
-  text-align:center; padding:3rem 2rem;
-  color:var(--muted); font-size:13px;
-}
+.empty{ text-align:center; padding:3rem 2rem; color:var(--muted); font-size:13px; }
 .empty-icon{ font-size:2.5rem; margin-bottom:.6rem; opacity:.35; }
 
-/* FOOTER */
-.app-footer{
-  text-align:center; padding:2rem 1rem;
-  color:var(--muted); font-size:12px; margin-top:1rem;
-}
+.app-footer{ text-align:center; padding:2rem 1rem; color:var(--muted); font-size:12px; margin-top:1rem; }
 .app-footer a{ color:var(--blue); text-decoration:none; }
 
 @media(max-width:680px){
@@ -476,7 +404,7 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
 </head>
 <body>
 
-<!-- ══════════════ LOGIN ══════════════ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
@@ -486,14 +414,10 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
         <p>Portal Fiscal · ADN Nacional</p>
       </div>
     </div>
-
     <div class="login-badge">🔒 Acesso restrito</div>
-
     <div class="login-title">Bem-vindo</div>
     <div class="login-subtitle">Informe suas credenciais para continuar.</div>
-
     <div class="login-error" id="login-error"></div>
-
     <div class="form-field">
       <label>Usuário</label>
       <input type="text" id="login-user" placeholder="seu.usuario" autocomplete="username">
@@ -503,14 +427,11 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
       <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
              onkeydown="if(event.key==='Enter') fazerLogin()">
     </div>
-
-    <button class="login-btn" id="login-btn" onclick="fazerLogin()">
-      Entrar
-    </button>
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Entrar</button>
   </div>
 </div>
 
-<!-- ══════════════ APP ══════════════ -->
+<!-- APP -->
 <div id="app">
 
   <header class="app-header">
@@ -519,9 +440,7 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
       <span class="app-logo-text">NFS-e <em>Lote</em></span>
     </a>
     <div class="hsp"></div>
-    <div class="app-user">
-      Olá, <strong id="user-name"></strong>
-    </div>
+    <div class="app-user">Olá, <strong id="user-name"></strong></div>
     <button class="app-logout" onclick="logout()">Sair</button>
   </header>
 
@@ -534,7 +453,6 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
         <span class="card-title">Baixar NFS-e em Lote — Portal Nacional (ADN)</span>
       </div>
       <div class="card-body">
-
         <div class="form-row">
           <div class="fg">
             <label>Certificado Digital A1 (.pfx / .p12)</label>
@@ -552,7 +470,6 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
             <input type="password" id="cert-pw" placeholder="••••••••" autocomplete="off" onblur="verificarCert()">
           </div>
         </div>
-
         <div class="form-row-3">
           <div class="fg">
             <label>Mês</label>
@@ -580,15 +497,10 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
             </select>
           </div>
         </div>
-
-        <button class="btn-primary" id="btn-start" onclick="iniciar()">
-          ▶ Iniciar download gratuito
-        </button>
-
+        <button class="btn-primary" id="btn-start" onclick="iniciar()">▶ Iniciar download gratuito</button>
         <div class="security-note">
           🔒 <span><strong>Privacidade:</strong> o certificado e a senha são usados somente durante o processamento. Nenhum dado fiscal é armazenado permanentemente. Os arquivos temporários são removidos automaticamente.</span>
         </div>
-
       </div>
     </div>
 
@@ -597,7 +509,7 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
       <div class="card-header">
         <div class="card-header-icon green">📊</div>
         <span class="card-title">Resultado do processamento</span>
-        <span style="margin-left:auto;font-size:11px;color:var(--muted)">Atualização em tempo real</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)" id="status-badge">Atualização em tempo real</span>
       </div>
       <div class="card-body" style="display:flex;flex-direction:column;gap:1.25rem">
 
@@ -612,6 +524,7 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
             <span>NSU: <strong id="prog-nsu">0</strong></span>
             <span>Lote: <strong id="prog-lote">0</strong></span>
             <span>Encontrados: <strong id="prog-found">0</strong></span>
+            <button class="btn-check" id="btn-check" onclick="verificarAgora()" style="margin-left:auto">🔄 Verificar agora</button>
           </div>
         </div>
 
@@ -632,23 +545,13 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
 
         <!-- Resultado final -->
         <div class="result-box" id="result-final">
-          <div class="result-success">✅ Consulta concluída com sucesso.</div>
+          <div id="result-msg" class="result-processing">⏳ Processando — downloads disponíveis abaixo enquanto aguarda.</div>
           <div class="dl-btns">
-            <button class="btn-success" id="btn-zip" onclick="dl('zip')" disabled>⬇ XMLs (.zip)</button>
-            <button class="btn-xlsx"    id="btn-xlsx" onclick="dl('xlsx')" disabled>⬇ Planilha Excel</button>
+            <button class="btn-success" id="btn-zip"  onclick="dl('zip')"       disabled>⬇ XMLs (.zip)</button>
+            <button class="btn-xlsx"    id="btn-xlsx" onclick="dl('xlsx')"      disabled>⬇ Planilha Excel</button>
             <button class="btn-outline" id="btn-rel"  onclick="dl('relatorio')" disabled>⬇ Relatório HTML</button>
             <button class="btn-outline" onclick="reiniciar()">↺ Nova consulta</button>
           </div>
-        </div>
-
-        <!-- Botão verificar manualmente (aparece durante processamento) -->
-        <div id="btn-verificar-wrap" style="display:none;margin-top:.5rem">
-          <button class="btn-outline" onclick="verificarManual()" style="width:100%;justify-content:center">
-            🔄 Verificar status agora
-          </button>
-          <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">
-            Se o log parou de atualizar, clique para verificar se o download terminou.
-          </p>
         </div>
 
       </div>
@@ -684,19 +587,34 @@ tbody td{ padding:9px 1rem; vertical-align:middle; }
 </div>
 
 <script>
-const API = '';  // mesmo domínio
-let token = localStorage.getItem('nfse_token');
+const API = '';
+let token    = localStorage.getItem('nfse_token');
 let username = localStorage.getItem('nfse_user');
-let jobId = null, polling = null, logIdx = 0, certFile = null;
+let jobId    = localStorage.getItem('nfse_job') || null;
+let logIdx   = parseInt(localStorage.getItem('nfse_logidx') || '0');
+let polling  = null;
+let certFile = null;
+let failCount = 0;
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 (function(){
-  if(token){ mostrarApp(); }
-  // Preenche mês/ano atual
+  if(token) mostrarApp();
+
   const n = new Date();
   document.getElementById('mes').value = n.getMonth()+1;
   for(let o of document.getElementById('ano').options)
     if(parseInt(o.value)===n.getFullYear()){ o.selected=true; break; }
+
+  // Restaura job em andamento após reload/reinicialização do servidor
+  if(token && jobId){
+    document.getElementById('result-card').style.display='block';
+    document.getElementById('table-card').style.display='block';
+    document.getElementById('prog-wrap').classList.add('show');
+    document.getElementById('btn-start').disabled=true;
+    document.getElementById('btn-start').textContent='⏳ Processando...';
+    log('sys','Retomando job: '+jobId+' (desde log '+logIdx+')');
+    iniciarPolling();
+  }
 })();
 
 // ── Login ─────────────────────────────────────────────────────────────────────
@@ -736,8 +654,7 @@ function onCert(inp){
   certFile=inp.files[0];
   document.getElementById('cert-name').textContent='✓ '+certFile.name;
   document.getElementById('cert-name').style.display='block';
-  const pw=document.getElementById('cert-pw').value;
-  if(pw) verificarCert();
+  if(document.getElementById('cert-pw').value) verificarCert();
 }
 const dz=document.getElementById('dz');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
@@ -746,12 +663,12 @@ dz.addEventListener('drop',e=>{
   e.preventDefault(); dz.classList.remove('over');
   const f=e.dataTransfer.files[0];
   if(f&&(f.name.endsWith('.pfx')||f.name.endsWith('.p12'))){
-    certFile=f; document.getElementById('cert-name').textContent='✓ '+f.name;
+    certFile=f;
+    document.getElementById('cert-name').textContent='✓ '+f.name;
     document.getElementById('cert-name').style.display='block';
-    const pw=document.getElementById('cert-pw').value; if(pw) verificarCert();
+    if(document.getElementById('cert-pw').value) verificarCert();
   }
 });
-
 async function verificarCert(){
   if(!certFile||!token) return;
   const pw=document.getElementById('cert-pw').value; if(!pw) return;
@@ -795,7 +712,9 @@ async function iniciar(){
   document.getElementById('table-wrap').style.display='none';
   document.getElementById('table-empty').style.display='block';
   document.getElementById('table-count').textContent='';
-  logIdx=0;
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('prog-pct').textContent='0%';
+  logIdx=0; failCount=0;
 
   const fd=new FormData();
   fd.append('cert',certFile); fd.append('senha',pw);
@@ -809,35 +728,78 @@ async function iniciar(){
     const d=await r.json();
     if(d.error){ alert(d.error); reset(); return; }
     jobId=d.job_id;
+    localStorage.setItem('nfse_job', jobId);
+    localStorage.setItem('nfse_logidx', '0');
     log('ok','Job iniciado: '+jobId);
     log('info','CNPJs: '+d.cnpjs.join(', '));
-    log('info','⏳ Aguarde — o processamento pode levar alguns minutos...');
-    polling=setInterval(tick,2000);
-    // Mostra botão verificar após 10s
-    setTimeout(()=>{
-      document.getElementById('btn-verificar-wrap').style.display='block';
-    }, 10000);
+    iniciarPolling();
   }catch(e){ alert('Erro: '+e.message); reset(); }
 }
 
 // ── Polling ───────────────────────────────────────────────────────────────────
-let errosTick = 0;
+function iniciarPolling(){
+  if(polling) clearInterval(polling);
+  failCount=0;
+  polling=setInterval(tick, 1500);
+  tick(); // verificação imediata
+}
+
+async function verificarAgora(){
+  // Botão manual: força uma verificação agora
+  failCount=0;
+  await tick();
+}
+
 async function tick(){
   if(!jobId) return;
   try{
-    const r=await fetch(API+'/api/status/'+jobId,{headers:{Authorization:'Bearer '+token}});
+    const r=await fetch(API+'/api/status/'+jobId+'?since='+logIdx, {
+      headers:{Authorization:'Bearer '+token},
+      signal: AbortSignal.timeout(25000)
+    });
     if(r.status===401){ clearInterval(polling); logout(); return; }
-    const d=await r.json(); if(d.error){ clearInterval(polling); reset(); return; }
-    errosTick = 0; // reset erros ao ter sucesso
 
-    d.logs.slice(logIdx).forEach(l=>log(l.tag,l.msg)); logIdx=d.logs.length;
-    document.getElementById('prog-fill').style.width=d.pct+'%';
-    document.getElementById('prog-pct').textContent=d.pct+'%';
-    document.getElementById('prog-label').textContent=d.status==='done'?'Concluído.':'Consultando lotes...';
-    document.getElementById('prog-nsu').textContent=d.nsu;
-    document.getElementById('prog-lote').textContent=d.lote;
-    document.getElementById('prog-found').textContent=d.docs.length;
+    // HTTP error (ex: servidor reiniciou e job sumiu da memória — será recarregado do disco pelo novo app.py)
+    if(!r.ok){
+      failCount++;
+      atualizarLabel();
+      return;
+    }
 
+    const d=await r.json();
+
+    // Servidor retornou erro (job não encontrado)
+    if(d.error){
+      failCount++;
+      atualizarLabel();
+      // Não para o polling — o servidor pode ter reiniciado e o job pode voltar do disco
+      if(failCount>15){
+        log('erro','Job não encontrado após muitas tentativas. Verifique o servidor.');
+        clearInterval(polling);
+        reset();
+      }
+      return;
+    }
+
+    // Sucesso — reseta contador de falhas
+    failCount=0;
+
+    // ── Novos logs (only since logIdx — servidor retorna logs[logIdx:])
+    if(d.logs && d.logs.length){
+      d.logs.forEach(l=>log(l.tag, l.msg));
+    }
+    logIdx = d.total_logs || logIdx;   // usa total_logs do servidor (bug fix: era d.logs.length)
+    localStorage.setItem('nfse_logidx', logIdx);
+
+    // ── Progresso
+    const pct=d.pct||0;
+    document.getElementById('prog-fill').style.width=pct+'%';
+    document.getElementById('prog-pct').textContent=pct+'%';
+    document.getElementById('prog-nsu').textContent=d.nsu||0;
+    document.getElementById('prog-lote').textContent=d.lote||0;
+    document.getElementById('prog-found').textContent=(d.docs||[]).length;
+
+    // ── Stats
     const s=d.stats||{};
     if(Object.keys(s).length){
       document.getElementById('stats-grid').style.display='grid';
@@ -849,27 +811,45 @@ async function tick(){
       document.getElementById('st-eventos').textContent=s.eventos||0;
     }
 
-    if(d.docs.length) renderTable(d.docs);
+    // ── Tabela
+    if(d.docs && d.docs.length) renderTable(d.docs);
 
-    // Mostra botões assim que tiver documentos — não espera o "done"
-    if(d.docs.length>0){
+    // ── Habilita downloads assim que tiver documentos (não precisa esperar "done")
+    if(d.docs && d.docs.length>0){
+      document.getElementById('result-final').classList.add('show');
       ['btn-zip','btn-xlsx','btn-rel'].forEach(id=>document.getElementById(id).disabled=false);
     }
 
+    // ── Concluído
     if(d.status==='done'){
-      clearInterval(polling); reset();
+      clearInterval(polling);
+      localStorage.removeItem('nfse_job');
+      localStorage.removeItem('nfse_logidx');
+      reset();
       document.getElementById('prog-fill').style.width='100%';
       document.getElementById('prog-pct').textContent='100%';
       document.getElementById('prog-label').textContent='Concluído.';
-      document.getElementById('result-final').classList.add('show');
+      const msg=document.getElementById('result-msg');
+      msg.className='result-success';
+      msg.textContent='✅ Consulta concluída com sucesso.';
+      document.getElementById('status-badge').textContent='Concluído';
+    } else {
+      atualizarLabel();
     }
-  }catch(e){
-    errosTick++;
-    // Após 5 erros consecutivos, verifica se o job terminou mesmo sem resposta
-    if(errosTick >= 5){
-      log('warn','Conexão instável. Verificando status...');
-      errosTick = 0;
-    }
+  } catch(e){
+    failCount++;
+    atualizarLabel();
+  }
+}
+
+function atualizarLabel(){
+  const lbl=document.getElementById('prog-label');
+  if(failCount>=10){
+    lbl.textContent='⚠ Conexão instável ('+failCount+' falhas) — clique em Verificar agora';
+  } else if(failCount>3){
+    lbl.textContent='Reconectando... (tentativa '+failCount+')';
+  } else {
+    lbl.textContent='Consultando lotes...';
   }
 }
 
@@ -896,36 +876,20 @@ function renderTable(docs){
   });
 }
 
-// ── Verificar manualmente ─────────────────────────────────────────────────────
-async function verificarManual(){
-  log('sys','Verificando status...');
-  await tick();
-  if(jobId){
-    // Força exibição dos botões se tiver docs
-    try{
-      const r=await fetch(API+'/api/status/'+jobId,{headers:{Authorization:'Bearer '+token}});
-      const d=await r.json();
-      if(d.docs && d.docs.length>0){
-        ['btn-zip','btn-xlsx','btn-rel'].forEach(id=>document.getElementById(id).disabled=false);
-        document.getElementById('result-final').classList.add('show');
-        document.getElementById('prog-label').textContent='Concluído.';
-        document.getElementById('prog-fill').style.width='100%';
-        document.getElementById('prog-pct').textContent='100%';
-        log('ok',`✅ ${d.docs.length} nota(s) encontrada(s). Clique em Baixar para exportar!`);
-        clearInterval(polling); reset();
-      } else {
-        log('info','Ainda processando... aguarde mais um pouco.');
-      }
-    }catch(e){ log('warn','Erro ao verificar: '+e.message); }
-  }
-}
+// ── Downloads ─────────────────────────────────────────────────────────────────
 function dl(tipo){ if(jobId) window.location=API+'/api/'+tipo+'/'+jobId+'?token='+token; }
 
 // ── Reset / Reiniciar ─────────────────────────────────────────────────────────
-function reset(){ document.getElementById('btn-start').disabled=false; document.getElementById('btn-start').textContent='▶ Iniciar download gratuito'; }
+function reset(){
+  document.getElementById('btn-start').disabled=false;
+  document.getElementById('btn-start').textContent='▶ Iniciar download gratuito';
+}
 async function reiniciar(){
+  if(polling) clearInterval(polling);
   if(jobId) await fetch(API+'/api/limpar/'+jobId,{method:'POST',headers:{Authorization:'Bearer '+token}}).catch(()=>{});
-  jobId=null; logIdx=0;
+  jobId=null; logIdx=0; failCount=0;
+  localStorage.removeItem('nfse_job');
+  localStorage.removeItem('nfse_logidx');
   document.getElementById('result-card').style.display='none';
   document.getElementById('table-card').style.display='none';
   document.getElementById('result-final').classList.remove('show');
